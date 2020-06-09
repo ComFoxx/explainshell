@@ -120,15 +120,15 @@ def _parsetext(lines):
     section = None
     i = 0
     for l in lines:
-        l = re.sub(_href, r'<a href="http://manpages.ubuntu.com/manpages/precise/en/man\2/\1.\2.html">', l)
+        l = re.sub(_href, r'<a href="http://manpages.ubuntu.com/manpages/precise/en/man\2/\1.\2.html">', l.decode())
         for lookfor, replacewith in _replacements:
             l = re.sub(lookfor, replacewith, l)
         # confirm the line is valid utf8
-        lreplaced = l.decode('utf8', 'ignore').encode('utf8')
-        if lreplaced != l:
-            logger.error('line %r contains invalid utf8', l)
-            l = lreplaced
-            raise ValueError
+        #lreplaced = l.decode('utf8', 'ignore').encode('utf8')
+        #if lreplaced != l:
+        #    logger.error('line %r contains invalid utf8', l)
+        #    l = lreplaced
+        #    raise ValueError
         if l.startswith('<b>'): # section
             section = re.sub(_section, r'\1', l)
         else:
@@ -156,7 +156,7 @@ def _parsesynopsis(base, synopsis):
     synopsis = synopsis[len(base)+3:-1]
     if synopsis[-1] == '.':
         synopsis = synopsis[:-1]
-    return SPLITSYNOP.match(synopsis).groups()
+    return SPLITSYNOP.match(synopsis.decode()).groups()
 
 class manpage(object):
     '''read the man page at path by executing w3mman2html.cgi and find its

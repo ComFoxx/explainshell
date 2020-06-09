@@ -33,7 +33,7 @@ class paragraph(object):
 
     @staticmethod
     def from_store(d):
-        p = paragraph(d.get('idx', 0), d['text'].encode('utf8'), d['section'], d['is_option'])
+        p = paragraph(d.get('idx', 0), d['text'], d['section'], d['is_option'])
         return p
 
     def to_store(self):
@@ -191,9 +191,7 @@ class manpage(object):
             paragraphs.append(pp)
 
         synopsis = d['synopsis']
-        if synopsis:
-            synopsis = synopsis.encode('utf8')
-        else:
+        if not synopsis:
             synopsis = helpconstants.NOSYNOPSIS
 
         return manpage(d['source'], d['name'], synopsis, paragraphs,

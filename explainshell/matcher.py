@@ -32,7 +32,7 @@ class matcher(bashlex.ast.nodevisitor):
     each token.
     '''
     def __init__(self, s, store):
-        self.s = s.encode('latin1', 'replace')
+        self.s = s
         self.store = store
         self._prevoption = self._currentoption = None
         self.groups = [matchgroup('shell')]
@@ -88,7 +88,6 @@ class matcher(bashlex.ast.nodevisitor):
         return self._currentoption
 
     def findmanpages(self, prog):
-        prog = prog.decode('latin1')
         logger.info('looking up %r in store', prog)
         manpages = self.store.findmanpage(prog)
         logger.info('found %r in store, got: %r, using %r', prog, manpages, manpages[0])
@@ -518,8 +517,7 @@ class matcher(bashlex.ast.nodevisitor):
         return False
 
     def visittilde(self, node, value):
-        self.expansions.append(matchwordexpansion(node.pos[0], node.pos[1],
-                                                  'tilde'))
+        self.expansions.append(matchwordexpansion(node.pos[0], node.pos[1], 'tilde'))
 
     def visitparameter(self, node, value):
         try:
@@ -528,15 +526,13 @@ class matcher(bashlex.ast.nodevisitor):
         except ValueError:
             kind = helpconstants.parameters.get(value, 'param')
 
-        self.expansions.append(matchwordexpansion(node.pos[0], node.pos[1],
-                                                  'parameter-%s' % kind))
+        self.expansions.append(matchwordexpansion(node.pos[0], node.pos[1], 'parameter-%s' % kind))
 
     def match(self):
         logger.info('matching string %r', self.s)
 
         # limit recursive parsing to a depth of 1
-        self.ast = bashlex.parser.parsesingle(self.s, expansionlimit=1,
-                                              strictmode=False)
+        self.ast = bashlex.parser.parsesingle(self.s, expansionlimit=1, strictmode=False)
         if self.ast:
             self.visit(self.ast)
             assert len(self.groupstack) == 1, 'groupstack should contain only shell group after matching'
@@ -569,7 +565,7 @@ class matcher(bashlex.ast.nodevisitor):
                 for i, m in enumerate(group.results):
                     assert m.end <= len(self.s), '%d %d' % (m.end, len(self.s))
 
-                    portion = self.s[m.start:m.end].decode('latin1')
+                    portion = self.s[m.start:m.end]
                     group.results[i] = matchresult(m.start, m.end, m.text, portion)
 
         logger.debug('%r matches:\n%s', self.s, debugmatch())
