@@ -1,6 +1,6 @@
-FROM python:2.7
+FROM python:latest
 
-MAINTAINER Simon Toivo Telhaug <simon.toivo@gmail.com>
+LABEL maintainer="Simon Toivo Telhaug <simon.toivo@gmail.com>"
 
 RUN apt-get update \
 && apt-get install man-db -y
